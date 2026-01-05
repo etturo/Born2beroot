@@ -87,6 +87,19 @@ This scheduling is handled by the crontab, that in his config file execute the `
 It is print with a programm called **Wall**.
 
 ## Instructions
+### Passwords
+Here are listed the password and the users in this VM:
+- **root**: Aglione4basta
+- **disk encryption**: Aglione4basta
+- **eturini**: PerForzissima42 -> provvisoria = "ciaone"
+
+### Command that I used
+- SSH commands
+	- Check the ssh service status: `systemctl status ssh`.
+	- To restart ssh: `systemctl restart ssh`.
+- User and Groups commands
+	- To login as root: `su`.
+
 
 ## Resources
 
