@@ -51,6 +51,8 @@ LVM works on three levels:
 ### SSH
 If we would like to connect to our machine remotely I had to setup the **ssh** (Secure SHell) creating an encrypted tunnel where te information can pass securely. Also I have changed the port 22, the default one, to add a security layer. Also another layer is added adding that the SSH connection fail to log into the root user, so remotely can't be modified the root files; only knowing the user, and his password permit to access the root folder.
 Also adding a **firewall** permit the incoming and outgoing traffic only by the port selected.
+To enter into the virtual machine remotely, the command to use is: \
+`ssh [user]@localhost -p [port]`
 
 ### Sudo and Groups
 Sudo is a fondamental program to use another user's priviliges, by default the **superuser**, the super user is the default user in linux that have the permission to modify every file on the disk.
@@ -91,7 +93,7 @@ It is print with a programm called **Wall**.
 Here are listed the password and the users in this VM:
 - **root**: Aglione4basta
 - **disk encryption**: Aglione4basta
-- **eturini**: PerForzissima42 -> provvisoria = "ciaone"
+- **eturini**: Perforzissima42
 
 ### Command that I used
 - SSH commands
@@ -99,6 +101,10 @@ Here are listed the password and the users in this VM:
 	- To restart ssh: `systemctl restart ssh`.
 - User and Groups commands
 	- To login as root: `su`.
+	- To add a group (as root): `groupadd [name]`.
+	- To add a user to a multiple group: `usermod -a -G [group1],[group2] [user]`.
+	- To see in wich groups a user is: `groups [user]`.
+	- To update an user password: `passwd [user]`.
 
 
 ## Resources
