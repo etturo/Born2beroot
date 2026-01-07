@@ -23,7 +23,8 @@ This type is more common on data centers or other server-based environments.
 - *Type 2 (Hosted)*
 This type of **Hypervisor** runs on an application, and from there interacts with the hardware. It is installed on the physical machine and then executed by an application, that have to negotiate with the hosting OS, to gain the resources that tey are set to have, despite of that, the hosting os have the priority on the process over the virtual OSs.
 
-In this project we will use Virtualbox, an open source type2 hypervisor.
+In this project we will use **Virtualbox**, an open source type2 hypervisor, that supports aldo cross-platform support. Using Apple Silicon Macs, the performance could be slower.
+An alternative could have been **UTM** but is an exclusive of macOS, so working on a linux machine, the choice was obvious.
 
 ### Linux Distribution
 For this project we have to use **Rocky Linux** or **Debian**.
@@ -31,6 +32,11 @@ For this project we have to use **Rocky Linux** or **Debian**.
 **Debian** on the other hand, is an open source that supports a lot of architectures, the Debian's slogan is "*universal operating system*", and is one of the totally non-profit linux distro.
 
 In my project I personally choosen **Debian** distro, because is easier to new in system administration.
+
+Is mandatory to mention that **Debian** have in the *kernel* a security module called: **AppArmor** that allows to the administrator of the system to restrict persmissions. AppArmor is offered as an alternative to **SeLinux** wich is based on applying labels on files, AppArmor is prefferd over SELinux because it is considered more complex to administrate and mantain.
+
+With debian come pre-installed **apt** that is a package manager, needed to install programs, **apt** takes the program from a list stored in `/etc/apt/sources.list` and retrieve all the dependecies to install the application.
+**apt** has a *CLI* to work, there is an alternative, **aptitude** this is another package manager, that comes with also a visual interface, I kept with **apt** because in my envirnment I do not have a *DE* (Desktop Environment), so I didn't needed a visual interface.
 
 ### Partitioning
 Partitioning means that we don't put all the files in a single and uniform part, we create the partition to store, specific values, that will not interfere each other stabilizing the system.
@@ -50,12 +56,20 @@ LVM works on three levels:
 
 ### SSH
 If we would like to connect to our machine remotely I had to setup the **ssh** (Secure SHell) creating an encrypted tunnel where te information can pass securely. Also I have changed the port 22, the default one, to add a security layer. Also another layer is added adding that the SSH connection fail to log into the root user, so remotely can't be modified the root files; only knowing the user, and his password permit to access the root folder.
-Also adding a **firewall** permit the incoming and outgoing traffic only by the port selected.
 To enter into the virtual machine remotely, the command to use is: \
 `ssh [user]@localhost -p [port]`
 
+To enhance security we set also a **firewall**, a programm that filters the incoming and outcoming network traffic and establish a barrier between a trusted newtork and untrusted network.
+For this project i chose **UFW** (Uncomplicated FireWall), as the name says, is designed to be easy to use, it use a CLI (Command Line Interface) and **iptables** to handle configurations rules (check `man iptables`). There was another firewall i could have choose, **firewalld** its name comes form firewall, and the *d* suffix that is commonly used for daemons. It uses also the **iptables** but the command line is more complicated than **UFW**.
+
 ### Sudo and Groups
-Sudo is a fondamental program to use another user's priviliges, by default the **superuser**, the super user is the default user in linux that have the permission to modify every file on the disk.
+Sudo is a fondamental program to use another user's priviliges, by default the **superuser**, the super user is the default user in linux that have the permission toFor this project we have to use **Rocky Linux** or **Debian**.
+**Rocky Linux** is a free and open source enterprise-oriented and aims to provide a solid community support, providing a robust option for servers. \
+**Debian** on the other hand, is an open source that supports a lot of architectures, the Debian's slogan is "*universal operating system*", and is one of the totally non-profit linux distro.
+
+In my project I personally choosen **Debian** distro, because is easier to new in system administration.
+
+Is mandatory to mention that **Debian** have in the *kernel* a security module called: **AppArmor** that allows to the administrator of the system to restrict persmissions. AppArmor is offered as an alternative to **SeLinux** wich is based on applying labels on files, AppArmor is prefferd over SELinux because it is considered more complex to administrate and mantain. modify every file on the disk.
 A **group** of users is a set of users that shares the same permission on the system.
 I also modified the sudo rules, that are:
 - `Default secure_path=".../path/..."` that limits the paths that can be used by sudo to run commands.
@@ -87,13 +101,15 @@ Another set of rules is handled by `pwquality`:
 I wrote a script that every 10 minutes, is displayed and contains machine information like the usage of RAM and the percentage of free space on disk, etc.
 This scheduling is handled by the crontab, that in his config file execute the `monitoring.sh` script every 10 minutes, the config file is stored in `/etc/cron.d`.
 It is print with a programm called **Wall**.
+The script have to run the first time at boot, so in the `crontab -e` i will include the `@reboot [script]`
 
 ## Instructions
 ### Passwords
 Here are listed the password and the users in this VM:
+- **disk encryption**(not a user): Aglione4basta
 - **root**: Aglione4basta
-- **disk encryption**: Aglione4basta
 - **eturini**: Perforzissima42
+- **gigio**: Madonnissima44
 
 ### Command that I used
 - SSH commands
@@ -101,6 +117,8 @@ Here are listed the password and the users in this VM:
 	- To restart ssh: `systemctl restart ssh`.
 - User and Groups commands
 	- To login as root: `su`.
+	- To add a user: `sudo useradd [new_user]`
+	- To verify an user: `id user`
 	- To add a group (as root): `groupadd [name]`.
 	- To add a user to a multiple group: `usermod -a -G [group1],[group2] [user]`.
 	- To see in wich groups a user is: `groups [user]`.
@@ -110,12 +128,21 @@ Here are listed the password and the users in this VM:
 ## Resources
 
 - **Hypervisor content**:
-	- https://www.redhat.com/en/topics/virtualization/what-is-a-hypervisor
-	- https://aws.amazon.com/it/compare/the-difference-between-type-1-and-type-2-hypervisors/
+	- [What is a Hypervisor](https://www.redhat.com/en/topics/virtualization/what-is-a-hypervisor)
+	- [Difference of Hypervisor type](https://aws.amazon.com/it/compare/the-difference-between-type-1-and-type-2-hypervisors/)
+	- [UTM vs VirtualBox](https://www.howtogeek.com/virtualbox-vs-utm-which-is-best-for-linux-vms-on-mac/)
 - **Distros content**:
-	- https://it.wikipedia.org/wiki/Rocky_Linux
-	- https://it.wikipedia.org/wiki/Debian
+	- [Rocky Linux wiki](https://it.wikipedia.org/wiki/Rocky_Linux)
+	- [Debian wiki](https://it.wikipedia.org/wiki/Debian)
+	- [AppArmor wiki](https://en.wikipedia.org/wiki/AppArmor)
+	- [SELinux wiki](https://en.wikipedia.org/wiki/Security-Enhanced_Linux)
+	- [APT vs Aptitude](https://blog.packagecloud.io/know-the-difference-between-apt-and-aptitude/)
+- **SSH**:
+	- [UFW wiki](https://en.wikipedia.org/wiki/Uncomplicated_Firewall)
+	- [firewalld wiki](https://en.wikipedia.org/wiki/Firewalld)
+	- [Firewall wiki](https://en.wikipedia.org/wiki/Firewall_(computing))
+	- [Iptables wiki](https://en.wikipedia.org/wiki/Iptables)
 - **Sudo and Groups content**:
-	- https://en.wikipedia.org/wiki/Sudo
-	- https://wiki.archlinux.org/title/Users_and_groups
-	- https://en.wikipedia.org/wiki/Tty_(Unix)
+	- [sudo wiki](https://en.wikipedia.org/wiki/Sudo)
+	- [user and group wiki](https://wiki.archlinux.org/title/Users_and_groups)
+	- [TTY wiki](https://en.wikipedia.org/wiki/Tty_(Unix))
